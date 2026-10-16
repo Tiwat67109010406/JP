@@ -225,11 +225,17 @@
         }
         .option-btn.selected { border-color: var(--primary); background: #e0e7ff; font-weight: bold; }
 
+        /* แก้ปัญหาหน้าต่างหด/ขยาย โดยล็อกความสูงขั้นต่ำไว้ 140px และจัดคำชิดบน */
         .word-pool, .answer-zone {
-            display: flex; flex-wrap: wrap; gap: 10px; min-height: 55px; padding: 12px;
+            display: flex; flex-wrap: wrap; align-content: flex-start; gap: 10px; 
+            min-height: 140px; 
+            padding: 12px;
             border-radius: 12px; margin-bottom: 15px;
+            box-sizing: border-box;
         }
-        .answer-zone { border: 2px dashed #a5b4fc; background: #f8fafc; }
+        .answer-zone { border: 2px dashed #a5b4fc; background: #eef2ff; }
+        .word-pool { border: 2px solid #e2e8f0; background: #f8fafc; }
+
         .word-chip {
             background: #ffffff; border: 2px solid #cbd5e1; padding: 10px 16px;
             border-radius: 10px; font-size: 1.1rem; cursor: pointer; user-select: none;
@@ -484,7 +490,12 @@ function playComboSound(level) {
 
 function speakJapaneseText(text) {
     if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
+    
+    // เคลียร์คิวเสียงเก่าเฉพาะกรณีที่กำลังพูดอยู่ (ป้องกันบั๊ก Safari)
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+    
     const cleanText = text.replace(/[。、！!,\.]/g, '').trim();
     if (!cleanText) return;
     
@@ -498,7 +509,7 @@ function speakJapaneseText(text) {
     window.speechSynthesis.speak(utterance);
 }
 
-// [ระบบแก้ความหน่วง] อ่านออกเสียงแบบ Asynchronous
+// อ่านเสียงเฉพาะจุดที่ไม่ได้คลิกตรงๆ (เช่น เอาคำใส่กล่อง)
 function asyncSpeak(text, delayMs = 50) {
     requestAnimationFrame(() => {
         setTimeout(() => { speakJapaneseText(text); }, delayMs);
@@ -587,7 +598,6 @@ function getRawQuestionsSet2() {
 
 function getRawQuestionsSet3() {
     let qArr = []; let id = 3000;
-    // ข้อมูลจากไฟล์ภาพ image_9a0bec.png
     const bases = [
         { ja: 'こんにちは、はなです。', th: 'สวัสดี ฉันคือฮานะ', romaji: 'Konnichiwa, Hana desu.', words: ['こんにちは、', 'はな', 'です。'] },
         { ja: 'こんばんは！', th: 'สวัสดีตอนเย็น!', romaji: 'Konbanwa!', words: ['こん', 'ばん', 'は！'] },
@@ -932,7 +942,8 @@ const QuizManager = {
         }
     },
 
-    showFeedback(setNum, isCorrect, msg) {
+    // เพิ่มฟังก์ชัน forceSpeak เพื่อให้อ่านเสียงเสมอแม้จะดูเฉลย
+    showFeedback(setNum, isCorrect, msg, forceSpeak = false) {
         const fb = document.getElementById(`set${setNum}-feedback`);
         fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
         fb.innerHTML = msg;
@@ -940,9 +951,9 @@ const QuizManager = {
         
         const q = this.states[setNum].questions[this.states[setNum].currentIndex];
         
-        // [แก้ปัญหาเสียงทับซ้อน] หน่วงเวลา
-        if (isCorrect && q.ja && q.type !== 'listening') {
-            asyncSpeak(q.ja, 400);
+        // [แก้ปัญหา iOS บล็อกเสียง] ให้อ่านเสียงทันที (Synchronous) เวลาที่กดปุ่ม
+        if ((isCorrect || forceSpeak) && q.ja) {
+            speakJapaneseText(q.ja);
         }
     },
 
@@ -978,7 +989,8 @@ const QuizManager = {
             let correctStr = q.type === 'unscramble' ? q.correctSeq.join('') : q.ans;
             let fullInfo = `<span style="font-size:1.1rem;">💡 <b>เฉลย:</b> ${correctStr}</span> ${extraInfo}`;
             
-            this.showFeedback(setNum, false, fullInfo);
+            // ส่ง true ไปเพื่อบังคับให้อ่านเสียงเฉลย
+            this.showFeedback(setNum, false, fullInfo, true);
             
             document.getElementById(`set${setNum}-check-btn`).style.display = 'none';
             document.getElementById(`set${setNum}-next-btn`).style.display = 'block';
