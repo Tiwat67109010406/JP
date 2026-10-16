@@ -133,22 +133,27 @@
             opacity: 1;
         }
 
-        /* ----- สลับการแสดงผลชุดแบบฝึกหัด ----- */
+        /* ----- ล็อกความกว้างตัวห่อ #quiz-wrappers-container ----- */
+        #quiz-wrappers-container {
+            width: 100%;
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
         .quiz-set-wrapper {
             display: none;
             width: 100%;
-            max-width: 580px;
         }
 
         .quiz-set-wrapper.active {
             display: block;
         }
 
-        /* ----- ล็อกขนาดการ์ดภายนอกถาวร (Fixed Width & Fixed Height) ----- */
+        /* ----- ล็อกขนาดการ์ดภายนอกถาวร ----- */
         .container {
             width: 100%;
             max-width: 580px;
-            height: 640px; /* ล็อกความสูงถาวร ไม่ว่าจะข้อไหน */
+            height: 640px;
             background: var(--card);
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
@@ -161,6 +166,7 @@
 
         .quiz-screen {
             height: 100%;
+            min-height: 0; /* ล็อก min-height */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -227,17 +233,20 @@
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 12px; }
         .part-badge { background: #e0e7ff; color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
 
-        /* ส่วนเนื้อหาโจทย์ ยืดหยุ่นแต่ไม่ดันขอบนอก (Scrollable Body) */
+        /* ส่วนเนื้อหาโจทย์ Scrollable Body ป้องกัน scrollbar ดันเนื้อหา */
         .question-box { 
             flex: 1; 
+            min-height: 0; /* ล็อก min-height */
             display: flex; 
             flex-direction: column; 
             overflow-y: auto; 
+            overflow-x: hidden; /* ป้องกันแนวนอน */
+            scrollbar-gutter: stable; /* กัน scrollbar ดันเนื้อหา */
             padding-right: 4px;
             margin-bottom: 10px;
         }
 
-        /* ตกแต่ง scrollbar เล็กๆ สวยงาม */
+        /* ตกแต่ง scrollbar */
         .question-box::-webkit-scrollbar { width: 4px; }
         .question-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
@@ -258,16 +267,22 @@
         }
         .option-btn.selected { border-color: var(--primary); background: #e0e7ff; font-weight: bold; }
 
-        /* กล่องคำตอบขนาดกะทัดรัด */
+        /* ล็อกความสูงกล่องเรียงคำที่ 120px และเลื่อนในกล่องแทน */
         .word-pool, .answer-zone {
             display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; 
-            min-height: 56px; 
+            height: 120px; /* ล็อกความสูงถาวร 120px */
+            overflow-y: auto; 
+            overflow-x: hidden;
+            scrollbar-gutter: stable;
             padding: 8px;
             border-radius: 12px; margin-bottom: 10px;
             box-sizing: border-box;
         }
         .answer-zone { border: 2px dashed #a5b4fc; background: #eef2ff; }
         .word-pool { border: 2px solid #e2e8f0; background: #f8fafc; }
+
+        .word-pool::-webkit-scrollbar, .answer-zone::-webkit-scrollbar { width: 4px; }
+        .word-pool::-webkit-scrollbar-thumb, .answer-zone::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
         .word-chip {
             background: #ffffff; border: 2px solid #cbd5e1; padding: 8px 12px;
@@ -982,6 +997,11 @@ const QuizManager = {
         fb.innerHTML = msg;
         fb.style.display = 'block';
         
+        // เลื่อนกล่องเฉลยมาอยู่ในสายตาอัตโนมัติ
+        requestAnimationFrame(() => {
+            fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
         const q = this.states[setNum].questions[this.states[setNum].currentIndex];
         
         if ((isCorrect || forceSpeak) && q.ja) {
