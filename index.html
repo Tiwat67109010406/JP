@@ -474,6 +474,19 @@ function switchQuizSet(setNumber) {
 // ----- ระบบเสียงและการทำงานของระบบควิซ -----
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+// [ระบบแก้ความหน่วง] Cache โหลดเสียงรอไว้ก่อน เพื่อไม่ให้หน้าจอค้างเวลากดปุ่ม
+let cachedJpVoice = null;
+function initVoices() {
+    if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices();
+        cachedJpVoice = voices.find(v => v.lang === 'ja-JP' || v.lang.includes('ja'));
+    }
+}
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = initVoices;
+    initVoices(); // ลองโหลดทันทีตอนเริ่มเกม
+}
+
 function triggerVibration(pattern) {
     if ('vibrate' in navigator) navigator.vibrate(pattern);
 }
@@ -556,17 +569,29 @@ function playComboSound(level) {
 }
 
 function speakJapaneseText(text) {
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const cleanText = text.replace(/[。、！!,\.]/g, '').trim();
-        if (!cleanText) return;
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'ja-JP'; utterance.rate = 0.85;
-        const voices = window.speechSynthesis.getVoices();
-        const jaVoice = voices.find(v => v.lang === 'ja-JP' || v.lang.includes('ja'));
-        if (jaVoice) utterance.voice = jaVoice;
-        window.speechSynthesis.speak(utterance);
-    }
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/[。、！!,\.]/g, '').trim();
+    if (!cleanText) return;
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'ja-JP'; 
+    utterance.rate = 0.85;
+    
+    // ใช้เสียงที่โหลดเตรียมไว้แล้ว ถ้าหาไม่เจอค่อยโหลดใหม่
+    if (!cachedJpVoice) initVoices();
+    if (cachedJpVoice) utterance.voice = cachedJpVoice;
+    
+    window.speechSynthesis.speak(utterance);
+}
+
+// [ระบบแก้ความหน่วง] อ่านออกเสียงแบบ Asynchronous เพื่อให้หน้าจอเปลี่ยนสีก่อนเสมอ
+function asyncSpeak(text, delayMs = 50) {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            speakJapaneseText(text);
+        }, delayMs);
+    });
 }
 
 function shuffleArray(array) {
@@ -846,19 +871,18 @@ const QuizManager = {
     toggleWord(setNum, word, chip, ansZone, poolZone) {
         const state = this.states[setNum];
         if (chip.parentElement === poolZone) {
-            playSound('click'); // ยังคงมีเสียงเอฟเฟคการกดกริ๊ก
+            playSound('click');
             
-            // อัปเดต UI ทันที ไม่ให้เกิดอาการค้าง/หน่วง
+            // อัปเดต UI ทันที
             poolZone.removeChild(chip);
             ansZone.appendChild(chip);
             state.userSelectedSequence.push(word);
 
-            // ใช้ setTimeout เพื่อหน่วงการอ่านออกเสียงไว้เสี้ยววินาที จะได้ไม่บล็อก UI
+            // อ่านเสียงแบบหน่วงเสี้ยววินาที ไม่ให้ขัดจังหวะหน้าจอ
             if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(word)) {
-                setTimeout(() => speakJapaneseText(word), 10);
+                asyncSpeak(word, 30);
             }
         } else {
-            // เอาออกไม่มีเสียง
             ansZone.removeChild(chip);
             poolZone.appendChild(chip);
             state.userSelectedSequence = state.userSelectedSequence.filter(w => w !== word);
@@ -874,7 +898,7 @@ const QuizManager = {
         const area = document.getElementById(`set${setNum}-interactive-area`);
         const columns = area.querySelectorAll('.matching-column');
         
-        // อัปเดต UI ทันที (เปลี่ยนสีปุ่ม) ไม่ให้เกิดอาการค้าง/หน่วง
+        // อัปเดต UI ทันที
         let targetCol = side === 'left' ? columns[0] : columns[1];
         targetCol.querySelectorAll('.match-item:not(.matched)').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
@@ -882,9 +906,9 @@ const QuizManager = {
         if (side === 'left') state.matchSelectedLeft = { text, btn };
         if (side === 'right') state.matchSelectedRight = { text, btn };
 
-        // ใช้ setTimeout เพื่ออ่านออกเสียงโดยไม่ให้บล็อก UI
+        // อ่านเสียงแบบหน่วงเสี้ยววินาที
         if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(text)) {
-            setTimeout(() => speakJapaneseText(text), 10);
+            asyncSpeak(text, 30);
         }
         
         if (state.matchSelectedLeft && state.matchSelectedRight) this.checkMatch(setNum, q);
@@ -979,8 +1003,10 @@ const QuizManager = {
         fb.style.display = 'block';
         
         const q = this.states[setNum].questions[this.states[setNum].currentIndex];
+        
+        // [แก้ปัญหาเสียงทับซ้อน] หน่วงเวลาไว้ 400ms ให้เสียง 'ถูกต้อง(ปิ๊งป่อง)' เล่นจบก่อนค่อยพูดเฉลย
         if (isCorrect && q.ja && q.type !== 'listening') {
-            setTimeout(() => speakJapaneseText(q.ja), 10);
+            asyncSpeak(q.ja, 400);
         }
     },
 
