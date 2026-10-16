@@ -557,12 +557,11 @@ function playComboSound(level) {
 
 function speakJapaneseText(text) {
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // ล้างคิวเสียงเก่าทิ้งเพื่อให้พูดทันที
+        window.speechSynthesis.cancel();
         const cleanText = text.replace(/[。、！!,\.]/g, '').trim();
         if (!cleanText) return;
         const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'ja-JP'; 
-        utterance.rate = 1.3; // ปรับความเร็วขึ้น (จากเดิม 0.85 เป็น 1.3)
+        utterance.lang = 'ja-JP'; utterance.rate = 0.85;
         const voices = window.speechSynthesis.getVoices();
         const jaVoice = voices.find(v => v.lang === 'ja-JP' || v.lang.includes('ja'));
         if (jaVoice) utterance.voice = jaVoice;
@@ -755,7 +754,6 @@ const QuizManager = {
         document.getElementById(`set${setNum}-check-btn`).style.display = 'block';
         document.getElementById(`set${setNum}-next-btn`).style.display = 'none';
         
-        // ซ่อนปุ่มเฉลยเมื่อเริ่มข้อใหม่
         let revealBtn = document.getElementById(`set${setNum}-reveal-btn`);
         if (revealBtn) revealBtn.style.display = 'none';
 
@@ -848,14 +846,17 @@ const QuizManager = {
     toggleWord(setNum, word, chip, ansZone, poolZone) {
         const state = this.states[setNum];
         if (chip.parentElement === poolZone) {
-            playSound('click'); 
-            // เพิ่มการอ่านออกเสียงภาษาญี่ปุ่นเมื่อกดคำไปใส่ช่องตอบ
-            if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(word)) {
-                speakJapaneseText(word);
-            }
+            playSound('click'); // ยังคงมีเสียงเอฟเฟคการกดกริ๊ก
+            
+            // อัปเดต UI ทันที ไม่ให้เกิดอาการค้าง/หน่วง
             poolZone.removeChild(chip);
             ansZone.appendChild(chip);
             state.userSelectedSequence.push(word);
+
+            // ใช้ setTimeout เพื่อหน่วงการอ่านออกเสียงไว้เสี้ยววินาที จะได้ไม่บล็อก UI
+            if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(word)) {
+                setTimeout(() => speakJapaneseText(word), 10);
+            }
         } else {
             // เอาออกไม่มีเสียง
             ansZone.removeChild(chip);
@@ -868,22 +869,23 @@ const QuizManager = {
         if (btn.classList.contains('matched') || this.states[setNum].isAnimating) return;
         
         playSound('click');
-        
-        // เพิ่มการอ่านออกเสียงเมื่อกดเลือกคำภาษาญี่ปุ่นในเกมจับคู่
-        if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(text)) {
-            speakJapaneseText(text);
-        }
 
         const state = this.states[setNum];
         const area = document.getElementById(`set${setNum}-interactive-area`);
         const columns = area.querySelectorAll('.matching-column');
         
+        // อัปเดต UI ทันที (เปลี่ยนสีปุ่ม) ไม่ให้เกิดอาการค้าง/หน่วง
         let targetCol = side === 'left' ? columns[0] : columns[1];
         targetCol.querySelectorAll('.match-item:not(.matched)').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         
         if (side === 'left') state.matchSelectedLeft = { text, btn };
         if (side === 'right') state.matchSelectedRight = { text, btn };
+
+        // ใช้ setTimeout เพื่ออ่านออกเสียงโดยไม่ให้บล็อก UI
+        if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(text)) {
+            setTimeout(() => speakJapaneseText(text), 10);
+        }
         
         if (state.matchSelectedLeft && state.matchSelectedRight) this.checkMatch(setNum, q);
     },
@@ -950,10 +952,8 @@ const QuizManager = {
             playSound('correct', state.combo);
             if (!state.hasFailedThisQuestion) { state.score++; state.combo++; }
             
-            // โชว์เฉลยแปลเฉพาะตอนตอบถูก
             this.showFeedback(setNum, true, `<span style="font-size:1.2rem;">✅ <b>ถูกต้อง!</b></span> ${extraInfo}`);
             
-            // สลับปุ่มเมื่อตอบถูก ให้ไปต่อได้
             document.getElementById(`set${setNum}-check-btn`).style.display = 'none';
             document.getElementById(`set${setNum}-next-btn`).style.display = 'block';
             let revealBtn = document.getElementById(`set${setNum}-reveal-btn`);
@@ -964,12 +964,10 @@ const QuizManager = {
             this.updateProgressBar(setNum);
             if (!state.wrongQuestions.includes(q)) state.wrongQuestions.push(q);
             
-            // แสดงผลเมื่อตอบผิด แต่ไม่บอกเฉลย และยังไม่ให้ไปต่อ
             this.showFeedback(setNum, false, `<span style="font-size:1.2rem;">❌ <b>ผิด!</b> ลองพยายามใหม่นะ (ข้อนี้จะถูกนำไปทบทวนตอนท้าย)</span>`);
             document.getElementById(`set${setNum}-check-btn`).style.display = 'block';
             document.getElementById(`set${setNum}-next-btn`).style.display = 'none';
             
-            // โชว์ปุ่มดูเฉลย มุมขวาล่าง เผื่อยอมแพ้
             this.showRevealButton(setNum, extraInfo, q);
         }
     },
@@ -981,7 +979,9 @@ const QuizManager = {
         fb.style.display = 'block';
         
         const q = this.states[setNum].questions[this.states[setNum].currentIndex];
-        if (isCorrect && q.ja && q.type !== 'listening') speakJapaneseText(q.ja);
+        if (isCorrect && q.ja && q.type !== 'listening') {
+            setTimeout(() => speakJapaneseText(q.ja), 10);
+        }
     },
 
     showRevealButton(setNum, extraInfo, q) {
@@ -991,7 +991,6 @@ const QuizManager = {
         if (!revealBtn) {
             revealBtn = document.createElement('button');
             revealBtn.id = `set${setNum}-reveal-btn`;
-            // จัดสไตล์ให้เล็ก จางๆ และดันไปชิดขวาล่าง หลบสายตาและนิ้วมือ
             revealBtn.style.marginTop = '25px';
             revealBtn.style.padding = '6px 12px';
             revealBtn.style.fontSize = '0.85rem';
@@ -1019,7 +1018,6 @@ const QuizManager = {
             
             this.showFeedback(setNum, false, fullInfo);
             
-            // พอกดเฉลย ค่อยยอมให้ไปข้อถัดไป
             document.getElementById(`set${setNum}-check-btn`).style.display = 'none';
             document.getElementById(`set${setNum}-next-btn`).style.display = 'block';
             revealBtn.style.display = 'none';
