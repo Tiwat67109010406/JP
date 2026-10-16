@@ -18,10 +18,13 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
-            padding-top: 70px;
+            padding: 15px;
+            padding-top: 65px;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         /* ----- ปุ่มเปิด/ปิด เมนูด้านบนซ้าย ----- */
@@ -134,39 +137,56 @@
         .quiz-set-wrapper {
             display: none;
             width: 100%;
-            max-width: 650px;
+            max-width: 580px;
         }
 
         .quiz-set-wrapper.active {
             display: block;
         }
 
+        /* ----- ล็อกขนาดการ์ดภายนอกถาวร (Fixed Width & Fixed Height) ----- */
         .container {
             width: 100%;
+            max-width: 580px;
+            height: 640px; /* ล็อกความสูงถาวร ไม่ว่าจะข้อไหน */
             background: var(--card);
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-            padding: 24px;
+            padding: 20px 24px;
             box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ----- Progress Bar & Combo Style ----- */
+        .quiz-screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Header ส่วนบน ล็อกตำแหน่งคงที่ */
+        .quiz-header-part {
+            flex-shrink: 0;
+        }
+
         .progress-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #64748b;
         }
 
         .progress-container {
             width: 100%;
-            height: 14px;
+            height: 12px;
             background: #e2e8f0;
             border-radius: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             overflow: hidden;
             position: relative;
         }
@@ -183,11 +203,11 @@
         .progress-bar.combo-orange { background: #f97316; box-shadow: 0 0 12px rgba(249, 115, 22, 0.5); }
         .progress-bar.combo-red { background: #ef4444; box-shadow: 0 0 16px rgba(239, 68, 68, 0.7); }
 
-        .combo-badge { display: flex; justify-content: flex-end; align-items: center; min-height: 28px; margin-bottom: 12px; }
+        .combo-badge { display: flex; justify-content: flex-end; align-items: center; min-height: 24px; margin-bottom: 8px; }
 
         .combo-text {
-            font-size: 0.95rem; font-weight: 800; color: #64748b; background: #f1f5f9;
-            border: 1px solid #e2e8f0; padding: 4px 14px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 800; color: #64748b; background: #f1f5f9;
+            border: 1px solid #e2e8f0; padding: 2px 12px; border-radius: 20px;
             opacity: 0; transform: translateY(-4px); transition: all 0.2s ease;
         }
         
@@ -204,52 +224,64 @@
             100% { transform: scale(1.08); box-shadow: 0 0 10px 3px rgba(239, 68, 68, 0.4); }
         }
 
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 12px; }
         .part-badge { background: #e0e7ff; color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
 
-        .question-box { margin-bottom: 20px; min-height: 280px; display: flex; flex-direction: column; }
-        .question-text { font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
-
-        .audio-btn {
-            background: #3b82f6; color: white; border: none; padding: 12px 20px;
-            border-radius: 10px; font-size: 1.1rem; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 8px; margin-bottom: 15px;
-            font-weight: bold; touch-action: manipulation;
+        /* ส่วนเนื้อหาโจทย์ ยืดหยุ่นแต่ไม่ดันขอบนอก (Scrollable Body) */
+        .question-box { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto; 
+            padding-right: 4px;
+            margin-bottom: 10px;
         }
 
-        .options { display: flex; flex-direction: column; gap: 10px; }
+        /* ตกแต่ง scrollbar เล็กๆ สวยงาม */
+        .question-box::-webkit-scrollbar { width: 4px; }
+        .question-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        .question-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+
+        .audio-btn {
+            background: #3b82f6; color: white; border: none; padding: 10px 18px;
+            border-radius: 10px; font-size: 1rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;
+            font-weight: bold; touch-action: manipulation; width: fit-content;
+        }
+
+        .options { display: flex; flex-direction: column; gap: 8px; }
         .option-btn {
-            background: #f9fafb; border: 2px solid #e2e8f0; padding: 12px 16px;
-            border-radius: 10px; font-size: 1.1rem; text-align: left; cursor: pointer;
+            background: #f9fafb; border: 2px solid #e2e8f0; padding: 10px 14px;
+            border-radius: 10px; font-size: 1rem; text-align: left; cursor: pointer;
             touch-action: manipulation; transition: all 0.15s ease;
         }
         .option-btn.selected { border-color: var(--primary); background: #e0e7ff; font-weight: bold; }
 
-        /* ปรับความสูงพอดีคำ สวยงาม ไม่โปร่งเกินไป */
+        /* กล่องคำตอบขนาดกะทัดรัด */
         .word-pool, .answer-zone {
             display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; 
-            min-height: 65px; 
-            padding: 10px;
-            border-radius: 12px; margin-bottom: 12px;
+            min-height: 56px; 
+            padding: 8px;
+            border-radius: 12px; margin-bottom: 10px;
             box-sizing: border-box;
-            transition: all 0.2s ease;
         }
         .answer-zone { border: 2px dashed #a5b4fc; background: #eef2ff; }
         .word-pool { border: 2px solid #e2e8f0; background: #f8fafc; }
 
         .word-chip {
-            background: #ffffff; border: 2px solid #cbd5e1; padding: 8px 14px;
-            border-radius: 10px; font-size: 1.05rem; cursor: pointer; user-select: none;
+            background: #ffffff; border: 2px solid #cbd5e1; padding: 8px 12px;
+            border-radius: 8px; font-size: 1rem; cursor: pointer; user-select: none;
             touch-action: manipulation; transform: scale(1); transition: transform 0.05s ease, background 0.1s ease;
         }
         .word-chip:active { transform: scale(0.92); background: #e0e7ff; }
 
-        .matching-container { display: flex; gap: 15px; justify-content: space-between; margin-bottom: 20px; }
-        .matching-column { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .matching-container { display: flex; gap: 12px; justify-content: space-between; margin-bottom: 10px; }
+        .matching-column { flex: 1; display: flex; flex-direction: column; gap: 10px; }
         .match-item {
-            padding: 14px 10px; border: 2px solid #cbd5e1; border-radius: 10px;
+            padding: 10px 8px; border: 2px solid #cbd5e1; border-radius: 10px;
             text-align: center; cursor: pointer; background: white; user-select: none;
-            font-size: 1.1rem; font-weight: 500; touch-action: manipulation;
+            font-size: 1rem; font-weight: 500; touch-action: manipulation;
         }
         .match-item.selected { background: #e0e7ff; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
         .match-item.matched { background: #dcfce7; border-color: #10b981; color: #15803d; pointer-events: none; opacity: 0.6; }
@@ -262,22 +294,27 @@
             75% { transform: translateX(-5px); }
         }
 
-        .action-btn-group { display: flex; gap: 10px; margin-top: auto; }
+        /* ส่วนท้าย (Action Buttons) ล็อกตำแหน่งด้านล่างถาวร */
+        .action-btn-group { 
+            flex-shrink: 0; 
+            margin-top: auto; 
+            padding-top: 5px;
+        }
         .check-btn, .next-btn {
-            width: 100%; color: white; border: none; padding: 14px;
-            border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; touch-action: manipulation;
+            width: 100%; color: white; border: none; padding: 12px;
+            border-radius: 10px; font-size: 1.05rem; font-weight: 600; cursor: pointer; touch-action: manipulation;
         }
         .check-btn { background: var(--primary); }
         .next-btn { background: #10b981; display: none; }
 
-        .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; display: none; font-weight: 500; line-height: 1.6; }
+        .feedback { margin-top: 10px; padding: 12px; border-radius: 10px; display: none; font-weight: 500; line-height: 1.5; font-size: 0.95rem; }
         .feedback.correct { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .feedback.wrong { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
         .end-screen { text-align: center; padding: 30px 10px; }
-        .end-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .restart-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
-        .retry-mistakes-btn { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+        .end-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .restart-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .retry-mistakes-btn { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -307,11 +344,10 @@
         </button>
     </div>
 
-    <!-- ฟังก์ชันสร้าง Template ของชุดแบบฝึกหัดแบบอัตโนมัติ -->
+    <!-- Container สำหรับแต่ละชุดแบบฝึกหัด -->
     <div id="quiz-wrappers-container"></div>
 
 <script>
-// ----- สคริปต์ควบคุม Sidebar -----
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
@@ -336,21 +372,23 @@ function generateQuizHTML(setNum, title) {
     return `
     <div id="set${setNum}-wrapper" class="quiz-set-wrapper ${setNum === 1 ? 'active' : ''}">
         <div class="container">
-            <div id="set${setNum}-quiz-screen">
-                <div class="progress-header">
-                    <span>ความคืบหน้า</span>
-                    <span id="set${setNum}-gauge-counter">0 / 15</span>
-                </div>
-                <div class="progress-container">
-                    <div id="set${setNum}-progress-bar" class="progress-bar"></div>
-                </div>
-                <div class="combo-badge">
-                    <div id="set${setNum}-combo-text" class="combo-text">⚡ Combo x0</div>
-                </div>
+            <div id="set${setNum}-quiz-screen" class="quiz-screen">
+                <div class="quiz-header-part">
+                    <div class="progress-header">
+                        <span>ความคืบหน้า</span>
+                        <span id="set${setNum}-gauge-counter">0 / 15</span>
+                    </div>
+                    <div class="progress-container">
+                        <div id="set${setNum}-progress-bar" class="progress-bar"></div>
+                    </div>
+                    <div class="combo-badge">
+                        <div id="set${setNum}-combo-text" class="combo-text">⚡ Combo x0</div>
+                    </div>
 
-                <div class="header">
-                    <span class="part-badge" id="set${setNum}-part-title">Part 1</span>
-                    <span class="progress" id="set${setNum}-progress-text" style="font-weight: bold; color: var(--primary);">ข้อ 1 / 15</span>
+                    <div class="header">
+                        <span class="part-badge" id="set${setNum}-part-title">Part 1</span>
+                        <span class="progress" id="set${setNum}-progress-text" style="font-weight: bold; color: var(--primary);">ข้อ 1 / 15</span>
+                    </div>
                 </div>
 
                 <div class="question-box">
@@ -359,14 +397,13 @@ function generateQuizHTML(setNum, title) {
                         🔊 กดฟังเสียง
                     </button>
                     <div id="set${setNum}-interactive-area"></div>
+                    <div id="set${setNum}-feedback" class="feedback"></div>
                 </div>
 
                 <div class="action-btn-group">
                     <button id="set${setNum}-check-btn" class="check-btn" onclick="QuizManager.checkAnswer(${setNum})">เช็คคำตอบ</button>
                     <button id="set${setNum}-next-btn" class="next-btn" onclick="QuizManager.nextQuestion(${setNum})">ถัดไป ➔</button>
                 </div>
-
-                <div id="set${setNum}-feedback" class="feedback"></div>
             </div>
 
             <div id="set${setNum}-end-screen" class="end-screen" style="display: none;">
@@ -391,7 +428,7 @@ document.getElementById('quiz-wrappers-container').innerHTML =
     generateQuizHTML(3, 'ชุดที่ 3') + 
     generateQuizHTML(12, 'ชุดประยุกต์ รวมทั้งหมด');
 
-// ----- ระบบเสียงและการทำงานของระบบควิซ -----
+// ----- ระบบเสียง Web Audio API -----
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 let cachedJpVoice = null;
@@ -507,7 +544,7 @@ function speakJapaneseText(text) {
     window.speechSynthesis.speak(utterance);
 }
 
-function asyncSpeak(text, delayMs = 50) {
+function asyncSpeak(text, delayMs = 30) {
     requestAnimationFrame(() => {
         setTimeout(() => { speakJapaneseText(text); }, delayMs);
     });
@@ -676,7 +713,7 @@ const QuizManager = {
     resetAndStart(setNum) {
         const state = this.states[setNum];
         state.currentIndex = 0; state.score = 0; state.combo = 0;
-        document.getElementById(`set${setNum}-quiz-screen`).style.display = 'block';
+        document.getElementById(`set${setNum}-quiz-screen`).style.display = 'flex';
         document.getElementById(`set${setNum}-end-screen`).style.display = 'none';
         this.updateProgressBar(setNum);
         this.showQuestion(setNum);
@@ -909,7 +946,7 @@ const QuizManager = {
 
         let extraInfo = "";
         if (q.ja) {
-            extraInfo = `<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,0.2); font-size: 1rem; line-height: 1.5;">
+            extraInfo = `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.2); font-size: 0.95rem; line-height: 1.4;">
                 🇯🇵 <b>${q.ja}</b> (${q.romaji})<br>
                 🇹🇭 ${q.th}
             </div>`;
@@ -919,7 +956,7 @@ const QuizManager = {
             playSound('correct', state.combo);
             if (!state.hasFailedThisQuestion) { state.score++; state.combo++; }
             
-            this.showFeedback(setNum, true, `<span style="font-size:1.2rem;">✅ <b>ถูกต้อง!</b></span> ${extraInfo}`);
+            this.showFeedback(setNum, true, `<span style="font-size:1.1rem;">✅ <b>ถูกต้อง!</b></span> ${extraInfo}`);
             
             document.getElementById(`set${setNum}-check-btn`).style.display = 'none';
             document.getElementById(`set${setNum}-next-btn`).style.display = 'block';
@@ -931,7 +968,7 @@ const QuizManager = {
             this.updateProgressBar(setNum);
             if (!state.wrongQuestions.includes(q)) state.wrongQuestions.push(q);
             
-            this.showFeedback(setNum, false, `<span style="font-size:1.2rem;">❌ <b>ผิด!</b> ลองพยายามใหม่นะ (ข้อนี้จะถูกนำไปทบทวนตอนท้าย)</span>`);
+            this.showFeedback(setNum, false, `<span style="font-size:1.1rem;">❌ <b>ผิด!</b> ลองพยายามใหม่นะ</span>`);
             document.getElementById(`set${setNum}-check-btn`).style.display = 'block';
             document.getElementById(`set${setNum}-next-btn`).style.display = 'none';
             
@@ -953,13 +990,13 @@ const QuizManager = {
     },
 
     showRevealButton(setNum, extraInfo, q) {
-        let container = document.getElementById(`set${setNum}-quiz-screen`);
+        let container = document.getElementById(`set${setNum}-interactive-area`);
         let revealBtn = document.getElementById(`set${setNum}-reveal-btn`);
         
         if (!revealBtn) {
             revealBtn = document.createElement('button');
             revealBtn.id = `set${setNum}-reveal-btn`;
-            revealBtn.style.marginTop = '25px';
+            revealBtn.style.marginTop = '15px';
             revealBtn.style.padding = '6px 12px';
             revealBtn.style.fontSize = '0.85rem';
             revealBtn.style.color = '#94a3b8';
@@ -982,7 +1019,7 @@ const QuizManager = {
         revealBtn.onclick = () => {
             playSound('click');
             let correctStr = q.type === 'unscramble' ? q.correctSeq.join('') : q.ans;
-            let fullInfo = `<span style="font-size:1.1rem;">💡 <b>เฉลย:</b> ${correctStr}</span> ${extraInfo}`;
+            let fullInfo = `<span style="font-size:1.05rem;">💡 <b>เฉลย:</b> ${correctStr}</span> ${extraInfo}`;
             
             this.showFeedback(setNum, false, fullInfo, true);
             
