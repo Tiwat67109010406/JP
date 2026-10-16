@@ -815,7 +815,9 @@ const QuizManager = {
             poolZone.className = 'word-pool';
             poolZone.id = `set${setNum}-pool-zone`;
             
-            q.words.forEach((w) => {
+            // สุ่มสลับคำศัพท์ในกล่องตัวเลือกเสมอ เพื่อไม่ให้เรียงเป็นคำตอบ
+            let shuffledWords = shuffleArray(q.words);
+            shuffledWords.forEach((w) => {
                 let chip = document.createElement('div');
                 chip.className = 'word-chip';
                 chip.innerText = w;
