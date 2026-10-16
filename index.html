@@ -67,6 +67,7 @@
             flex-direction: column;
             gap: 12px;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .sidebar.open {
@@ -291,163 +292,16 @@
         <button class="set-btn" id="btn-set2" onclick="switchQuizSet(2)">
             📝 แบบฝึกหัด ชุดที่ 2 <span>➔</span>
         </button>
+        <button class="set-btn" id="btn-set3" onclick="switchQuizSet(3)">
+            📝 แบบฝึกหัด ชุดที่ 3 (ทักทาย) <span>➔</span>
+        </button>
         <button class="set-btn" id="btn-set12" onclick="switchQuizSet(12)">
-            🔥 ชุดประยุกต์ 12 <span>➔</span>
+            🔥 ชุดประยุกต์ รวมทั้งหมด <span>➔</span>
         </button>
     </div>
 
-    <!-- ===== ชุดที่ 1 ===== -->
-    <div id="set1-wrapper" class="quiz-set-wrapper active">
-        <div class="container">
-            <div id="set1-quiz-screen">
-                <div class="progress-header">
-                    <span>ความคืบหน้า</span>
-                    <span id="set1-gauge-counter">0 / 15</span>
-                </div>
-                <div class="progress-container">
-                    <div id="set1-progress-bar" class="progress-bar"></div>
-                </div>
-                <div class="combo-badge">
-                    <div id="set1-combo-text" class="combo-text">⚡ Combo x0</div>
-                </div>
-
-                <div class="header">
-                    <span class="part-badge" id="set1-part-title">Part 1</span>
-                    <span class="progress" id="set1-progress-text" style="font-weight: bold; color: var(--primary);">ข้อ 1 / 15</span>
-                </div>
-
-                <div class="question-box">
-                    <div class="question-text" id="set1-question-text">คำถาม</div>
-                    <button id="set1-audio-btn" class="audio-btn" onclick="QuizManager.playQuestionAudio(1)" style="display: none;">
-                        🔊 กดฟังเสียง
-                    </button>
-                    <div id="set1-interactive-area"></div>
-                </div>
-
-                <div class="action-btn-group">
-                    <button id="set1-check-btn" class="check-btn" onclick="QuizManager.checkAnswer(1)">เช็คคำตอบ</button>
-                    <button id="set1-next-btn" class="next-btn" onclick="QuizManager.nextQuestion(1)">ถัดไป ➔</button>
-                </div>
-
-                <div id="set1-feedback" class="feedback"></div>
-            </div>
-
-            <div id="set1-end-screen" class="end-screen" style="display: none;">
-                <h2>🎉 จบแบบฝึกหัด (ชุดที่ 1)!</h2>
-                <p style="font-size: 1.5rem; font-weight: bold; margin: 20px 0;">
-                    คะแนน: <span id="set1-final-score" style="color: var(--primary);">0</span> / <span id="set1-total-score">15</span>
-                </p>
-                <div class="end-buttons">
-                    <button id="set1-retry-mistakes-btn" class="retry-mistakes-btn" onclick="QuizManager.startMistakesQuiz(1)" style="display: none;">
-                        ❌ ซ่อมข้อที่ผิด (<span id="set1-wrong-count">0</span> ข้อ)
-                    </button>
-                    <button class="restart-btn" onclick="QuizManager.startQuiz(1)">🔄 สุ่มเริ่มเซ็ตใหม่ 15 ข้อ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== ชุดที่ 2 ===== -->
-    <div id="set2-wrapper" class="quiz-set-wrapper">
-        <div class="container">
-            <div id="set2-quiz-screen">
-                <div class="progress-header">
-                    <span>ความคืบหน้า</span>
-                    <span id="set2-gauge-counter">0 / 15</span>
-                </div>
-                <div class="progress-container">
-                    <div id="set2-progress-bar" class="progress-bar"></div>
-                </div>
-                <div class="combo-badge">
-                    <div id="set2-combo-text" class="combo-text">⚡ Combo x0</div>
-                </div>
-
-                <div class="header">
-                    <span class="part-badge" id="set2-part-title">Part 1</span>
-                    <span class="progress" id="set2-progress-text" style="font-weight: bold; color: var(--primary);">ข้อ 1 / 15</span>
-                </div>
-
-                <div class="question-box">
-                    <div class="question-text" id="set2-question-text">คำถาม</div>
-                    <button id="set2-audio-btn" class="audio-btn" onclick="QuizManager.playQuestionAudio(2)" style="display: none;">
-                        🔊 กดฟังเสียง
-                    </button>
-                    <div id="set2-interactive-area"></div>
-                </div>
-
-                <div class="action-btn-group">
-                    <button id="set2-check-btn" class="check-btn" onclick="QuizManager.checkAnswer(2)">เช็คคำตอบ</button>
-                    <button id="set2-next-btn" class="next-btn" onclick="QuizManager.nextQuestion(2)">ถัดไป ➔</button>
-                </div>
-
-                <div id="set2-feedback" class="feedback"></div>
-            </div>
-
-            <div id="set2-end-screen" class="end-screen" style="display: none;">
-                <h2>🎉 จบแบบฝึกหัด (ชุดที่ 2)!</h2>
-                <p style="font-size: 1.5rem; font-weight: bold; margin: 20px 0;">
-                    คะแนน: <span id="set2-final-score" style="color: var(--primary);">0</span> / <span id="set2-total-score">15</span>
-                </p>
-                <div class="end-buttons">
-                    <button id="set2-retry-mistakes-btn" class="retry-mistakes-btn" onclick="QuizManager.startMistakesQuiz(2)" style="display: none;">
-                        ❌ ซ่อมข้อที่ผิด (<span id="set2-wrong-count">0</span> ข้อ)
-                    </button>
-                    <button class="restart-btn" onclick="QuizManager.startQuiz(2)">🔄 สุ่มเริ่มเซ็ตใหม่ 15 ข้อ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== ชุดประยุกต์ 12 ===== -->
-    <div id="set12-wrapper" class="quiz-set-wrapper">
-        <div class="container">
-            <div id="set12-quiz-screen">
-                <div class="progress-header">
-                    <span>ความคืบหน้า</span>
-                    <span id="set12-gauge-counter">0 / 15</span>
-                </div>
-                <div class="progress-container">
-                    <div id="set12-progress-bar" class="progress-bar"></div>
-                </div>
-                <div class="combo-badge">
-                    <div id="set12-combo-text" class="combo-text">⚡ Combo x0</div>
-                </div>
-
-                <div class="header">
-                    <span class="part-badge" id="set12-part-title">Part 1</span>
-                    <span class="progress" id="set12-progress-text" style="font-weight: bold; color: var(--primary);">ข้อ 1 / 15</span>
-                </div>
-
-                <div class="question-box">
-                    <div class="question-text" id="set12-question-text">คำถาม</div>
-                    <button id="set12-audio-btn" class="audio-btn" onclick="QuizManager.playQuestionAudio(12)" style="display: none;">
-                        🔊 กดฟังเสียง
-                    </button>
-                    <div id="set12-interactive-area"></div>
-                </div>
-
-                <div class="action-btn-group">
-                    <button id="set12-check-btn" class="check-btn" onclick="QuizManager.checkAnswer(12)">เช็คคำตอบ</button>
-                    <button id="set12-next-btn" class="next-btn" onclick="QuizManager.nextQuestion(12)">ถัดไป ➔</button>
-                </div>
-
-                <div id="set12-feedback" class="feedback"></div>
-            </div>
-
-            <div id="set12-end-screen" class="end-screen" style="display: none;">
-                <h2>🎉 จบแบบฝึกหัด (ชุดประยุกต์ 12)!</h2>
-                <p style="font-size: 1.5rem; font-weight: bold; margin: 20px 0;">
-                    คะแนน: <span id="set12-final-score" style="color: var(--primary);">0</span> / <span id="set12-total-score">15</span>
-                </p>
-                <div class="end-buttons">
-                    <button id="set12-retry-mistakes-btn" class="retry-mistakes-btn" onclick="QuizManager.startMistakesQuiz(12)" style="display: none;">
-                        ❌ ซ่อมข้อที่ผิด (<span id="set12-wrong-count">0</span> ข้อ)
-                    </button>
-                    <button class="restart-btn" onclick="QuizManager.startQuiz(12)">🔄 สุ่มเริ่มเซ็ตใหม่ 15 ข้อ</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- ฟังก์ชันสร้าง Template ของชุดแบบฝึกหัดแบบอัตโนมัติ -->
+    <div id="quiz-wrappers-container"></div>
 
 <script>
 // ----- สคริปต์ควบคุม Sidebar -----
@@ -471,10 +325,70 @@ function switchQuizSet(setNumber) {
     closeSidebar();
 }
 
+// สร้าง HTML สำหรับแต่ละชุดแบบฝึกหัดแบบ Dynamic (ลดการเขียนโค้ดซ้ำซ้อน)
+function generateQuizHTML(setNum, title) {
+    return `
+    <div id="set${setNum}-wrapper" class="quiz-set-wrapper ${setNum === 1 ? 'active' : ''}">
+        <div class="container">
+            <div id="set${setNum}-quiz-screen">
+                <div class="progress-header">
+                    <span>ความคืบหน้า</span>
+                    <span id="set${setNum}-gauge-counter">0 / 15</span>
+                </div>
+                <div class="progress-container">
+                    <div id="set${setNum}-progress-bar" class="progress-bar"></div>
+                </div>
+                <div class="combo-badge">
+                    <div id="set${setNum}-combo-text" class="combo-text">⚡ Combo x0</div>
+                </div>
+
+                <div class="header">
+                    <span class="part-badge" id="set${setNum}-part-title">Part 1</span>
+                    <span class="progress" id="set${setNum}-progress-text" style="font-weight: bold; color: var(--primary);">ข้อ 1 / 15</span>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-text" id="set${setNum}-question-text">คำถาม</div>
+                    <button id="set${setNum}-audio-btn" class="audio-btn" onclick="QuizManager.playQuestionAudio(${setNum})" style="display: none;">
+                        🔊 กดฟังเสียง
+                    </button>
+                    <div id="set${setNum}-interactive-area"></div>
+                </div>
+
+                <div class="action-btn-group">
+                    <button id="set${setNum}-check-btn" class="check-btn" onclick="QuizManager.checkAnswer(${setNum})">เช็คคำตอบ</button>
+                    <button id="set${setNum}-next-btn" class="next-btn" onclick="QuizManager.nextQuestion(${setNum})">ถัดไป ➔</button>
+                </div>
+
+                <div id="set${setNum}-feedback" class="feedback"></div>
+            </div>
+
+            <div id="set${setNum}-end-screen" class="end-screen" style="display: none;">
+                <h2>🎉 จบแบบฝึกหัด (${title})!</h2>
+                <p style="font-size: 1.5rem; font-weight: bold; margin: 20px 0;">
+                    คะแนน: <span id="set${setNum}-final-score" style="color: var(--primary);">0</span> / <span id="set${setNum}-total-score">15</span>
+                </p>
+                <div class="end-buttons">
+                    <button id="set${setNum}-retry-mistakes-btn" class="retry-mistakes-btn" onclick="QuizManager.startMistakesQuiz(${setNum})" style="display: none;">
+                        ❌ ซ่อมข้อที่ผิด (<span id="set${setNum}-wrong-count">0</span> ข้อ)
+                    </button>
+                    <button class="restart-btn" onclick="QuizManager.startQuiz(${setNum})">🔄 สุ่มเริ่มเซ็ตใหม่ 15 ข้อ</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+document.getElementById('quiz-wrappers-container').innerHTML = 
+    generateQuizHTML(1, 'ชุดที่ 1') + 
+    generateQuizHTML(2, 'ชุดที่ 2') + 
+    generateQuizHTML(3, 'ชุดที่ 3') + 
+    generateQuizHTML(12, 'ชุดประยุกต์ รวมทั้งหมด');
+
 // ----- ระบบเสียงและการทำงานของระบบควิซ -----
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// [ระบบแก้ความหน่วง] Cache โหลดเสียงรอไว้ก่อน เพื่อไม่ให้หน้าจอค้างเวลากดปุ่ม
+// [ระบบแก้ความหน่วง] Cache โหลดเสียงรอไว้ก่อน
 let cachedJpVoice = null;
 function initVoices() {
     if ('speechSynthesis' in window) {
@@ -484,7 +398,7 @@ function initVoices() {
 }
 if ('speechSynthesis' in window) {
     window.speechSynthesis.onvoiceschanged = initVoices;
-    initVoices(); // ลองโหลดทันทีตอนเริ่มเกม
+    initVoices(); 
 }
 
 function triggerVibration(pattern) {
@@ -578,19 +492,16 @@ function speakJapaneseText(text) {
     utterance.lang = 'ja-JP'; 
     utterance.rate = 0.85;
     
-    // ใช้เสียงที่โหลดเตรียมไว้แล้ว ถ้าหาไม่เจอค่อยโหลดใหม่
     if (!cachedJpVoice) initVoices();
     if (cachedJpVoice) utterance.voice = cachedJpVoice;
     
     window.speechSynthesis.speak(utterance);
 }
 
-// [ระบบแก้ความหน่วง] อ่านออกเสียงแบบ Asynchronous เพื่อให้หน้าจอเปลี่ยนสีก่อนเสมอ
+// [ระบบแก้ความหน่วง] อ่านออกเสียงแบบ Asynchronous
 function asyncSpeak(text, delayMs = 50) {
     requestAnimationFrame(() => {
-        setTimeout(() => {
-            speakJapaneseText(text);
-        }, delayMs);
+        setTimeout(() => { speakJapaneseText(text); }, delayMs);
     });
 }
 
@@ -603,7 +514,7 @@ function shuffleArray(array) {
     return arr;
 }
 
-// ----- ข้อมูลควิซทั้งสองชุด -----
+// ----- ข้อมูลควิซ -----
 function getRawQuestionsSet1() {
     let qArr = []; let id = 1;
     const v = [ { j: 'ごはん', t: 'ข้าว', r: 'Gohan' }, { j: 'みず', t: 'น้ำ', r: 'Mizu' }, { j: 'おちゃ', t: 'ชาเขียว', r: 'Ocha' }, { j: 'すし', t: 'ซูชิ', r: 'Sushi' } ];
@@ -625,12 +536,11 @@ function getRawQuestionsSet1() {
     bases.forEach(b => {
         let opts1 = getWrongOptions(b.th, 'th', 2); opts1.push(b.th);
         qArr.push({ id: id++, type: 'choice', part: 'Part 1: อ่านและแปล', q: `คำแปลของ "${b.ja}" คือข้อใด?`, options: shuffleArray(opts1), ans: b.th, ja: b.ja, romaji: b.romaji, th: b.th });
-        
         let optsAudio = getWrongOptions(b.ja, 'ja', 2); optsAudio.push(b.ja);
         qArr.push({ id: id++, type: 'listening', part: 'Part 2: ฟังเสียง', q: '🔊 ฟังเสียงแล้วเลือกประโยคภาษาญี่ปุ่น', audioText: b.ja, options: shuffleArray(optsAudio), ans: b.ja, ja: b.ja, romaji: b.romaji, th: b.th });
     });
 
-    const allChips = ['ごはん', 'みず', 'おちゃ', 'すし', 'と', 'です。', 'ください。', 'みず、', 'すし、', 'おちゃ、', 'ごはん、'];
+    const allChips = ['ごはん', 'みず', 'おちゃ', 'すし', 'と', 'です。', 'ください。', 'みず、', 'すし、'];
     bases.forEach(b => {
         let decoys = shuffleArray(allChips.filter(c => !b.words.includes(c))).slice(0, 2);
         qArr.push({ id: id++, type: 'unscramble', part: 'Part 3: เรียงประโยค', q: `เรียงคำให้ถูกต้อง: "${b.th}"`, words: [...b.words, ...decoys], correctSeq: b.words, ja: b.ja, romaji: b.romaji, th: b.th });
@@ -638,7 +548,6 @@ function getRawQuestionsSet1() {
 
     qArr.push({ id: 'P4_1', type: 'matching', sub: 'p4', part: 'Part 4: จับคู่คำศัพท์', q: 'จับคู่ภาษาญี่ปุ่น (ซ้าย) กับคำแปล (ขวา)', pairs: [ { l: 'ごはん', r: 'ข้าว' }, { l: 'みず', r: 'น้ำ' }, { l: 'おちゃ', r: 'ชาเขียว' }, { l: 'すし', r: 'ซูชิ' } ] });
     qArr.push({ id: 'P5_1', type: 'matching', sub: 'p5', part: 'Part 5: จับคู่โรมาจิ', q: 'จับคู่โรมาจิ (ซ้าย) กับภาษาญี่ปุ่น (ขวา)', pairs: [ { l: 'Gohan', r: 'ごはん' }, { l: 'Mizu', r: 'みず' }, { l: 'Ocha', r: 'おちゃ' }, { l: 'Sushi', r: 'すし' } ], noSound: true });
-
     return qArr;
 }
 
@@ -661,7 +570,6 @@ function getRawQuestionsSet2() {
     bases.forEach(b => {
         let opts1 = getWrongOptions(b.th, 'th', 2); opts1.push(b.th);
         qArr.push({ id: id++, type: 'choice', part: 'Part 1: อ่านและแปล', q: `คำแปลของ "${b.ja}" คือข้อใด?`, options: shuffleArray(opts1), ans: b.th, ja: b.ja, romaji: b.romaji, th: b.th });
-        
         let optsAudio = getWrongOptions(b.ja, 'ja', 2); optsAudio.push(b.ja);
         qArr.push({ id: id++, type: 'listening', part: 'Part 2: ฟังเสียง', q: '🔊 ฟังเสียงแล้วเลือกประโยคภาษาญี่ปุ่น', audioText: b.ja, options: shuffleArray(optsAudio), ans: b.ja, ja: b.ja, romaji: b.romaji, th: b.th });
     });
@@ -674,7 +582,41 @@ function getRawQuestionsSet2() {
 
     qArr.push({ id: 'P4_2', type: 'matching', sub: 'p4', part: 'Part 4: จับคู่คำศัพท์', q: 'จับคู่ภาษาญี่ปุ่น (ซ้าย) กับคำแปล (ขวา)', pairs: [ { l: 'せんせい', r: 'อาจารย์/ครู' }, { l: 'いしゃ', r: 'หมอ' }, { l: 'がくせい', r: 'นักเรียน' }, { l: 'べんごし', r: 'ทนายความ' } ] });
     qArr.push({ id: 'P5_2', type: 'matching', sub: 'p5', part: 'Part 5: จับคู่โรมาจิ', q: 'จับคู่โรมาจิ (ซ้าย) กับภาษาญี่ปุ่น (ขวา)', pairs: [ { l: 'Sensei', r: 'せんせい' }, { l: 'Isha', r: 'いしゃ' }, { l: 'Bengoshi', r: 'べんごし' }, { l: 'Yasashii', r: 'やさしい' } ], noSound: true });
+    return qArr;
+}
 
+function getRawQuestionsSet3() {
+    let qArr = []; let id = 3000;
+    // ข้อมูลจากไฟล์ภาพ image_9a0bec.png
+    const bases = [
+        { ja: 'こんにちは、はなです。', th: 'สวัสดี ฉันคือฮานะ', romaji: 'Konnichiwa, Hana desu.', words: ['こんにちは、', 'はな', 'です。'] },
+        { ja: 'こんばんは！', th: 'สวัสดีตอนเย็น!', romaji: 'Konbanwa!', words: ['こん', 'ばん', 'は！'] },
+        { ja: 'なおみさん、またあした。', th: 'เจอกันพรุ่งนี้นะ คุณนาโอมิ', romaji: 'Naomi san, mata ashita.', words: ['なおみさん、', 'また', 'あした。'] },
+        { ja: 'けんです、こんにちは。', th: 'ผมคือเคน สวัสดี', romaji: 'Ken desu, konnichiwa.', words: ['けんです、', 'こんにちは。'] },
+        { ja: 'はなさん、こんばんは。', th: 'สวัสดีตอนเย็น คุณฮานะ', romaji: 'Hana san, konbanwa.', words: ['はなさん、', 'こんばんは。'] }
+    ];
+
+    function getWrongOptions(correctStr, key, count) {
+        let options = bases.filter(b => b[key] !== correctStr).map(b => b[key]);
+        return shuffleArray([...new Set(options)]).slice(0, count);
+    }
+
+    bases.forEach(b => {
+        let opts1 = getWrongOptions(b.th, 'th', 2); opts1.push(b.th);
+        qArr.push({ id: id++, type: 'choice', part: 'Part 1: อ่านและแปล', q: `คำแปลของ "${b.ja}" คือข้อใด?`, options: shuffleArray(opts1), ans: b.th, ja: b.ja, romaji: b.romaji, th: b.th });
+        
+        let optsAudio = getWrongOptions(b.ja, 'ja', 2); optsAudio.push(b.ja);
+        qArr.push({ id: id++, type: 'listening', part: 'Part 2: ฟังเสียง', q: '🔊 ฟังเสียงแล้วเลือกประโยคภาษาญี่ปุ่น', audioText: b.ja, options: shuffleArray(optsAudio), ans: b.ja, ja: b.ja, romaji: b.romaji, th: b.th });
+    });
+
+    const allChips = ['こんにちは、', 'こんばんは！', 'なおみさん、', 'はなさん、', 'けんです、', 'はな', 'です。', 'また', 'あした。', 'こん', 'ばん', 'は！'];
+    bases.forEach(b => {
+        let decoys = shuffleArray(allChips.filter(c => !b.words.includes(c))).slice(0, 2);
+        qArr.push({ id: id++, type: 'unscramble', part: 'Part 3: เรียงประโยค', q: `เรียงคำให้ถูกต้อง: "${b.th}"`, words: [...b.words, ...decoys], correctSeq: b.words, ja: b.ja, romaji: b.romaji, th: b.th });
+    });
+
+    qArr.push({ id: 'P4_3', type: 'matching', sub: 'p4', part: 'Part 4: จับคู่คำศัพท์', q: 'จับคู่ภาษาญี่ปุ่น (ซ้าย) กับคำแปล (ขวา)', pairs: [ { l: 'こんにちは', r: 'สวัสดีตอนกลางวัน' }, { l: 'こんばんは', r: 'สวัสดีตอนเย็น' }, { l: 'またあした', r: 'เจอกันพรุ่งนี้' }, { l: 'です', r: 'คือ / เป็น' } ] });
+    qArr.push({ id: 'P5_3', type: 'matching', sub: 'p5', part: 'Part 5: จับคู่โรมาจิ', q: 'จับคู่โรมาจิ (ซ้าย) กับภาษาญี่ปุ่น (ขวา)', pairs: [ { l: 'Konnichiwa', r: 'こんにちは' }, { l: 'Konbanwa', r: 'こんばんは' }, { l: 'Mata ashita', r: 'またあした' }, { l: 'Hana desu', r: 'はなです' } ], noSound: true });
     return qArr;
 }
 
@@ -683,17 +625,17 @@ const QuizManager = {
     states: {
         1: { raw: [], questions: [], wrongQuestions: [], currentIndex: 0, score: 0, combo: 0, selectedChoiceStr: null, userSelectedSequence: [], hasFailedThisQuestion: false, matchSelectedLeft: null, matchSelectedRight: null, matchedPairs: 0, isAnimating: false },
         2: { raw: [], questions: [], wrongQuestions: [], currentIndex: 0, score: 0, combo: 0, selectedChoiceStr: null, userSelectedSequence: [], hasFailedThisQuestion: false, matchSelectedLeft: null, matchSelectedRight: null, matchedPairs: 0, isAnimating: false },
+        3: { raw: [], questions: [], wrongQuestions: [], currentIndex: 0, score: 0, combo: 0, selectedChoiceStr: null, userSelectedSequence: [], hasFailedThisQuestion: false, matchSelectedLeft: null, matchSelectedRight: null, matchedPairs: 0, isAnimating: false },
         12: { raw: [], questions: [], wrongQuestions: [], currentIndex: 0, score: 0, combo: 0, selectedChoiceStr: null, userSelectedSequence: [], hasFailedThisQuestion: false, matchSelectedLeft: null, matchSelectedRight: null, matchedPairs: 0, isAnimating: false }
     },
 
     init() {
         this.states[1].raw = getRawQuestionsSet1();
         this.states[2].raw = getRawQuestionsSet2();
-        this.states[12].raw = [...this.states[1].raw, ...this.states[2].raw];
+        this.states[3].raw = getRawQuestionsSet3();
+        this.states[12].raw = [...this.states[1].raw, ...this.states[2].raw, ...this.states[3].raw];
 
-        this.startQuiz(1);
-        this.startQuiz(2);
-        this.startQuiz(12);
+        this.startQuiz(1); this.startQuiz(2); this.startQuiz(3); this.startQuiz(12);
     },
 
     startQuiz(setNum) {
@@ -872,13 +814,10 @@ const QuizManager = {
         const state = this.states[setNum];
         if (chip.parentElement === poolZone) {
             playSound('click');
-            
-            // อัปเดต UI ทันที
             poolZone.removeChild(chip);
             ansZone.appendChild(chip);
             state.userSelectedSequence.push(word);
 
-            // อ่านเสียงแบบหน่วงเสี้ยววินาที ไม่ให้ขัดจังหวะหน้าจอ
             if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(word)) {
                 asyncSpeak(word, 30);
             }
@@ -891,14 +830,12 @@ const QuizManager = {
 
     selectMatch(setNum, side, text, btn, q) {
         if (btn.classList.contains('matched') || this.states[setNum].isAnimating) return;
-        
         playSound('click');
 
         const state = this.states[setNum];
         const area = document.getElementById(`set${setNum}-interactive-area`);
         const columns = area.querySelectorAll('.matching-column');
         
-        // อัปเดต UI ทันที
         let targetCol = side === 'left' ? columns[0] : columns[1];
         targetCol.querySelectorAll('.match-item:not(.matched)').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
@@ -906,7 +843,6 @@ const QuizManager = {
         if (side === 'left') state.matchSelectedLeft = { text, btn };
         if (side === 'right') state.matchSelectedRight = { text, btn };
 
-        // อ่านเสียงแบบหน่วงเสี้ยววินาที
         if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(text)) {
             asyncSpeak(text, 30);
         }
@@ -1004,7 +940,7 @@ const QuizManager = {
         
         const q = this.states[setNum].questions[this.states[setNum].currentIndex];
         
-        // [แก้ปัญหาเสียงทับซ้อน] หน่วงเวลาไว้ 400ms ให้เสียง 'ถูกต้อง(ปิ๊งป่อง)' เล่นจบก่อนค่อยพูดเฉลย
+        // [แก้ปัญหาเสียงทับซ้อน] หน่วงเวลา
         if (isCorrect && q.ja && q.type !== 'listening') {
             asyncSpeak(q.ja, 400);
         }
@@ -1082,7 +1018,6 @@ const QuizManager = {
     }
 };
 
-// เริ่มต้นการทำงานเมื่อโหลดหน้าเว็บ
 window.onload = () => QuizManager.init();
 </script>
 </body>
